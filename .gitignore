@@ -1,3 +1,4 @@
 venv/
 tm.db
 __pycache__/
+*.pyc
