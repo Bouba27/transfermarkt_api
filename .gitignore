@@ -1,0 +1,3 @@
+venv/
+tm.db
+__pycache__/
