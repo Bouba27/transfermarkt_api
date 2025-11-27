@@ -10,15 +10,21 @@ class League(Base):
     name = Column(String, index=True)
     country = Column(String, index=True)
     url = Column(String, unique=True)
+    
+class Transfer(Base):
+    __tablename__ = "transfers"
 
-class Club(Base):
-    __tablename__ = "clubs"
     id = Column(Integer, primary_key=True, index=True)
-    tm_id = Column(String, unique=True, index=True)
-    name = Column(String, index=True)
-    url = Column(String, unique=True)
-    league_id = Column(Integer, ForeignKey("leagues.id"))
-    league = relationship("League")
+    player_id = Column(Integer, ForeignKey("players.id"), index=True)
+    season = Column(String, nullable=True)
+    date = Column(String, nullable=True)  # texte brut pour éviter les échecs de parsing
+    from_club = Column(String)
+    to_club = Column(String)
+    fee = Column(String)  # valeur brute (“€10m”, “Libre”, etc.)
+    url = Column(String, nullable=True)
+
+    player = relationship("Player")
+
 
 class Player(Base):
     __tablename__ = "players"
@@ -26,6 +32,7 @@ class Player(Base):
 
     tm_id = Column(String, unique=True, index=True)
     name = Column(String, index=True)
+    url = Column(String, unique=True, index=True)  # <— ajoute cette ligne
 
     birth_date = Column(Date, nullable=True)
     nationality = Column(String, index=True)
@@ -40,5 +47,16 @@ class Player(Base):
 
     scraped = Column(Boolean, default=False, index=True)
     description_raw = Column(Text, nullable=True)
+
+
+class Club(Base):
+    __tablename__ = "clubs"
+    id = Column(Integer, primary_key=True, index=True)
+    tm_id = Column(String, unique=True, index=True)
+    name = Column(String, index=True)
+    url = Column(String, unique=True)
+    league_id = Column(Integer, ForeignKey("leagues.id"))
+    league = relationship("League")
+
 
 Index("ix_players_name_tm_id", Player.name, Player.tm_id)

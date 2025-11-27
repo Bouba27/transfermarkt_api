@@ -1,10 +1,16 @@
-from fastapi import FastAPI
-from .db import Base, engine
-from .routes.players import router as players_router
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.db import get_db
+from app.models import Player, Club, League, Transfer
 
-Base.metadata.create_all(bind=engine)
+@app.get("/debug/counts")
+def debug_counts(db: Session = Depends(get_db)):
+    return {
+        "players": db.query(Player).count(),
+        "clubs": db.query(Club).count(),
+        "leagues": db.query(League).count(),
+        "transfers": db.query(Transfer).count(),
+    }
 
-app = FastAPI(title="Transfermarkt-like API")
 
-app.include_router(players_router, prefix="/players", tags=["players"])
 

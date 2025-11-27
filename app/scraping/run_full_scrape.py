@@ -1,11 +1,9 @@
 # app/scraping/run_full_scrape.py
-
 import asyncio
-from scraper_leagues import scrape_leagues
-from scraper_clubs import scrape_clubs
-from scraper_players import scrape_players
-from scrape_player_details import main as scrape_details
-
+from app.scraping.scraper_leagues import scrape_leagues
+from app.scraping.scraper_clubs import scrape_clubs
+from app.scraping.scraper_players import scrape_players
+from app.scraping.scraper_players_details import main as scrape_players_details_main
 
 async def run_all():
     print("=== Scraping ligues ===")
@@ -18,10 +16,10 @@ async def run_all():
     await scrape_players()
 
     print("=== Scraping détails joueurs ===")
-    await scrape_details()
+    await scrape_players_details_main()
 
     print("=== SCRAPING GLOBAL TERMINÉ ===")
 
-
 if __name__ == "__main__":
     asyncio.run(run_all())
+

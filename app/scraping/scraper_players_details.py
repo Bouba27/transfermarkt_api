@@ -1,4 +1,4 @@
-# app/scraping/scrape_player_details.py
+# app/scraping/scraper_players_details.py
 
 import asyncio
 from bs4 import BeautifulSoup
@@ -59,20 +59,9 @@ async def scrape_details_for_player(page, player: Player, db: Session):
 
     value_el = soup.select_one("div.dataMarktwert span.mw")
     if value_el:
-        player.market_value_million = parse_market_value(value_el.text)
-
-    # --- Stats simples ---
-    stats_row = soup.select_one("table.items tbody tr")
-
-    if stats_row:
-        cells = stats_row.select("td")
-        try:
-            player.appearances = clean_int(cells[-5].text)
-            player.goals = clean_int(cells[-4].text)
-            player.assists = clean_int(cells[-3].text)
-            player.minutes_played = clean_int(cells[-1].text)
-        except:
-            pass
+        mv_mio = parse_market_value(value_el.text)
+        if mv_mio:
+            player.market_value_eur = mv_mio * 1_000_000
 
     # --- Historique des transferts ---
     db.query(Transfer).filter_by(player_id=player.id).delete()
@@ -84,12 +73,11 @@ async def scrape_details_for_player(page, player: Player, db: Session):
             cols = row.select("td")
             if len(cols) < 5:
                 continue
-
             db.add(
                 Transfer(
                     player_id=player.id,
                     season=cols[0].text.strip(),
-                    date=cols[1].text.strip(),
+                    date=cols[1].text.strip(),  # texte brut
                     from_club=cols[2].text.strip(),
                     to_club=cols[3].text.strip(),
                     fee=cols[4].text.strip(),

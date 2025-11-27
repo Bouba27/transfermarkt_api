@@ -37,7 +37,7 @@ async def scrape_players():
                             name=name,
                             tm_id=tm_id,
                             url=url,
-                            scraped=False
+                            scraped=False,
                         )
                     )
                     db.commit()
@@ -46,3 +46,8 @@ async def scrape_players():
         await browser.close()
     db.close()
     print("=== Joueurs enregistrés ===")
+
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(scrape_players())
