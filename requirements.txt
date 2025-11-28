@@ -9,4 +9,4 @@ beautifulsoup4
 tenacity
 python-dateutil
 tqdm
-
+python-dotenv
